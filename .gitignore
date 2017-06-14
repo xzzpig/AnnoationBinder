@@ -1,9 +1,10 @@
-*.iml
-.gradle
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries
-.DS_Store
-/build
-/captures
-.externalNativeBuild
+
+将删除 .idea/workspace.xml
+将删除 annoationbinder/.gitignore
+将删除 annoationbinder/libs/
+将删除 annoationbinder/src/main/res/drawable/
+/build/
+/gradle/
+/app/
+/annoationbinder/src/androidTest/
+/annoationbinder/src/test/
