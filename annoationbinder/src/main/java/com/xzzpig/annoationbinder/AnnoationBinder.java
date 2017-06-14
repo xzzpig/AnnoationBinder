@@ -28,11 +28,12 @@ import java.util.Map;
 
 public class AnnoationBinder {
     public static void bindViews(Object target, View rootView) {
-        for (Field field : target.getClass().getFields()) {
+        for (Field field : target.getClass().getDeclaredFields()) {
             if (field.isAnnotationPresent(BindView.class)) {
                 int id = field.getAnnotation(BindView.class).id();
                 if (id != 0) {
                     try {
+                        field.setAccessible(true);
                         field.set(target, rootView.findViewById(id));
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -97,16 +98,20 @@ public class AnnoationBinder {
             Method m = entry.getKey();
             Field field = null;
             try {
-                field = target.getClass().getField(initField.target());
-            } catch (NoSuchFieldException e) {
+                field = target.getClass().getDeclaredField(initField.target());
+            } catch (Exception e) {
                 continue;
             }
+            field.setAccessible(true);
+            m.setAccessible(true);
             try {
-                m.invoke(target, field.get(target));
+                Object o = field.get(target);
+                m.invoke(target, o);
             } catch (Exception e) {
                 try {
                     m.invoke(target);
                 } catch (Exception e1) {
+                    e1.printStackTrace();
                     continue;
                 }
                 continue;
@@ -132,12 +137,14 @@ public class AnnoationBinder {
         for (Map.Entry<Method, BindInitView> entry : list) {
             BindInitView initField = entry.getValue();
             Method m = entry.getKey();
+            m.setAccessible(true);
             try {
                 m.invoke(target, rootView.findViewById(initField.target()));
             } catch (Exception e) {
                 try {
                     m.invoke(target);
                 } catch (Exception e1) {
+                    e1.printStackTrace();
                     continue;
                 }
                 continue;
